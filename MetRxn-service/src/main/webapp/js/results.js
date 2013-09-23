@@ -13,9 +13,11 @@ $("#searchBtn").click (function() {
 });
 
 function fetchJSONResults (requestedPageNumber, sortCol, sortOrder) {
-	var pathParams = "/" + requestedPageNumber + "/" + sortCol + "/" + sortOrder + "/" + encodeURIComponent(getEmployeeSearch(searchVal)); 
+	var pathParams = "pageNumber=" + requestedPageNumber + "&sortCol=" + sortCol + "&sortOrder=" + sortOrder + "&queryString=" + encodeURIComponent(getEmployeeSearch(searchVal)); 
 	$.ajax({
-		url: "http://localhost:8080/MetRxn-service/services/queries/results" + pathParams,
+		type: "POST",
+		url: "http://localhost:8080/MetRxn-service/services/queries/results",
+		data : pathParams, 
 		dataType: "json",
 		success: function(result){
 			result = jQuery.parseJSON(JSON.stringify(result));
@@ -41,14 +43,16 @@ function fetchJSONResults (requestedPageNumber, sortCol, sortOrder) {
 				}
 				if (currentPage - 1 >= 1)
 					$("#prev").show();
-				var size = 0;
 				$("#currentpageNumber").text(currentPage);
 				$.each(collection, function(employee) {
-					size = 1;
-					console.log(collection[employee]);
-					var extraData = "<td>10000</td><td>Sales</td>";
-					var rowData = "<tr> <td> " + collection[employee].id + "</td> <td>" + collection[employee].name + "</td> " + extraData + "</tr>";
-					$("#resultsTable tbody").append(rowData);
+					var extraData = "<td>10000</td><td>Sales</td>"; //TODO : remove this in the original code base.
+					var rowBegin = "<tr>";
+					var rowData = "";
+					$.each(collection[employee], function(key,value){
+						rowData = rowData + " <td> " + value + "</td> ";
+					});
+					var rowEnd = "</tr>";
+					$("#resultsTable tbody").append(rowBegin + rowData + extraData + rowEnd );
 				});
 			}				
 		}

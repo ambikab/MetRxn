@@ -3,10 +3,12 @@ package org.code.metrxn.service;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.sql.SQLException;
-import javax.ws.rs.GET;
+
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.code.metrxn.dto.ViewResource;
 import org.code.metrxn.repository.QueryRepository;
@@ -21,16 +23,16 @@ import org.code.metrxn.util.SearchCriteria;
 
 @Path("/queries")
 public class QueryExecutorService {
-	
+
 	QueryRepository queryRepository = new QueryRepository();
-	
-	@GET
+	///{pageNumber}/{sortCol}/{sortOrder}/{queryString}
+	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/results/{pageNumber}/{sortCol}/{sortOrder}/{queryString}")
-	public String getPaginatedResults(@PathParam("pageNumber") String pageNumber, 
-												  @PathParam("sortCol") String sortCol,  
-												  @PathParam("sortOrder") String sortOrder,
-												  @PathParam("queryString") String searchString) throws IOException, SQLException {
+	@Path("/results")
+	public String getPaginatedResults(@FormParam("pageNumber") String pageNumber, 
+			@FormParam("sortCol") String sortCol,  
+			@FormParam("sortOrder") String sortOrder,
+			@FormParam("queryString") String searchString) throws IOException, SQLException {
 		int reqPgNo = Integer.parseInt(pageNumber);
 		SearchCriteria searchCriteria = new SearchCriteria();
 		searchCriteria.setSearchString(URLDecoder.decode(searchString, "UTF-8"));
