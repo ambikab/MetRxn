@@ -1,16 +1,19 @@
 package org.code.metrxn.dto;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- * 
+ * Wraps up the result set data that is to be rendered to the requested object.
+ * Contains the result set fetched from the database, along with the information of pagination 
+ * and the total number of records that matched the current query.
  * @author ambika_b
  *
  */
 public class ViewResource {
 	
-	public List<HashMap<String,Object>> resultSet;
+	public List<LinkedHashMap<String,Object>> resultSet;
 	
 	public int totalRecordCount;
 	
@@ -19,7 +22,7 @@ public class ViewResource {
 	public ViewResource() {
 	}
 	
-	public ViewResource(List<HashMap<String,Object>> resultSet, int totalRecordCount, int currentPageNumber) {
+	public ViewResource(List<LinkedHashMap<String,Object>> resultSet, int totalRecordCount, int currentPageNumber) {
 		super();
 		this.resultSet = resultSet;
 		this.totalRecordCount = totalRecordCount;
@@ -42,11 +45,11 @@ public class ViewResource {
 		this.currentPageNumber = currentPageNumber;
 	}
 
-	public List<HashMap<String, Object>> getResultSet() {
+	public List<LinkedHashMap<String, Object>> getResultSet() {
 		return resultSet;
 	}
 
-	public void setResultSet(List<HashMap<String, Object>> resultSet) {
+	public void setResultSet(List<LinkedHashMap<String, Object>> resultSet) {
 		this.resultSet = resultSet;
 	}
 	

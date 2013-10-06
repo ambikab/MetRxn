@@ -8,6 +8,12 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+/**
+ * converts a given POJo to its equivalent json object.
+ * Includes all the fields of the object that is passed to the JSON object. 
+ * @author ambika babuji
+ *
+ */
 public class JsonUtil {
 
 

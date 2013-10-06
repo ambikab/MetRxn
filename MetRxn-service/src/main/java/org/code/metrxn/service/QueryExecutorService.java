@@ -1,14 +1,11 @@
 package org.code.metrxn.service;
 
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.sql.SQLException;
-
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.code.metrxn.dto.ViewResource;
 import org.code.metrxn.repository.QueryRepository;
@@ -18,14 +15,28 @@ import org.code.metrxn.util.SearchCriteria;
 /**
  * 
  * @author ambika_b
- *
+ * REST end point that receives for all the searches in the system.
+ * 
  */
 
 @Path("/queries")
 public class QueryExecutorService {
 
 	QueryRepository queryRepository = new QueryRepository();
-	///{pageNumber}/{sortCol}/{sortOrder}/{queryString}
+	
+	/**
+	 * Fetches the result set of the employees table, that matches the given search query.
+	 * Returns the result set and the requested page number and
+	 * total number of records that matched the query string.
+	 * Result sets are converted to JSON.
+	 * @param pageNumber
+	 * @param sortCol
+	 * @param sortOrder
+	 * @param searchString
+	 * @return json object of {@link ViewResource}
+	 * @throws IOException
+	 * @throws SQLException
+	 */
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/results")
@@ -33,9 +44,10 @@ public class QueryExecutorService {
 			@FormParam("sortCol") String sortCol,  
 			@FormParam("sortOrder") String sortOrder,
 			@FormParam("queryString") String searchString) throws IOException, SQLException {
+		
 		int reqPgNo = Integer.parseInt(pageNumber);
 		SearchCriteria searchCriteria = new SearchCriteria();
-		searchCriteria.setSearchString(URLDecoder.decode(searchString, "UTF-8"));
+		searchCriteria.setSearchString(searchString);
 		searchCriteria.setSortColumn(sortCol);
 		searchCriteria.setSortOrder(sortOrder);
 		searchCriteria.setReqPageNo(reqPgNo);

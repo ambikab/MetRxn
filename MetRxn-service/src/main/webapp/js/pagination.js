@@ -1,4 +1,6 @@
-reqPgNo = 0;
+reqPgNoOne = 0;
+reqPgNoTwo = 0;
+reqPgNoThree = 0;
 next = 0;
 sortOrder = 'ASC';
 sortCol =  'empId';
@@ -18,7 +20,7 @@ function chooseSortArrows(order) {
 		return 'icon-arrow-up';
 }
 
-$("#empId").click(function() {
+$("#column1").click(function() {
 	if (sortCol == 'empId') {
 		sortOrder = chooseSortOrder(sortOrder);
 	} else {
@@ -45,20 +47,45 @@ $("#empName").click(function() {
 	fetchJSONResults(reqPgNo, sortCol, sortOrder);
 });
 
-
-
-
-$("#prev").click (function() {
-	fetchJSONResults(reqPgNo - 1, sortCol, sortOrder);
+$("#prevOne").click (function() {
+	reqPgNoOne = reqPgNoOne - 1;
+	fetchJSONResults("One", getSearchResults(searchVal, 'test'),reqPgNoOne, "source", sortOrder);
+	return false;
 });
 
-$("#next").click (function() {
-	fetchJSONResults(reqPgNo + 1, sortCol, sortOrder);
+$("#nextOne").click (function() {
+	reqPgNoOne = reqPgNoOne + 1;
+	fetchJSONResults("One", getSearchResults(searchVal, 'test'),reqPgNoOne, "source", sortOrder);
+	return false;
 });
 
-function resultsMode() {
+$("#prevTwo").click (function() {
+	reqPgNoTwo = reqPgNoTwo - 1;
+	fetchJSONResults("Two", getSearchResults(searchVal, 'test'),reqPgNoTwo, "source", sortOrder);
+	return false;
+});
+
+$("#nextTwo").click (function() {
+	reqPgNoTwo = reqPgNoTwo + 1;
+	fetchJSONResults("Two", getSearchResults(searchVal, 'test'),reqPgNoTwo, "source", sortOrder);
+	return false;
+});
+
+$("#prevThree").click (function() {
+	reqPgNoThree = reqPgNoThree - 1;
+	fetchJSONResults("Three", getSearchResults(searchVal, 'test'),reqPgNoThree, "source", sortOrder);
+	return false;
+});
+
+$("#nextThree").click (function() {
+	reqPgNoThree = reqPgNoThree + 1;
+	fetchJSONResults("Three", getSearchResults(searchVal, 'test'),reqPgNoThree, "source", sortOrder);
+	return false;
+});
+
+function resultsMode(tableId) {
 	$("#homeContents").hide();
 	$("#searchResults").show();
-	$("#next").hide(); //TODO : Remove from DOM
-	$("#prev").hide(); //TODO : Remove from DOM
+	$("#next" + tableId).hide(); //TODO : Remove from DOM
+	$("#prev" + tableId).hide(); //TODO : Remove from DOM
 }

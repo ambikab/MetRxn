@@ -7,25 +7,35 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import org.code.metrxn.util.DBUtil;
 import org.code.metrxn.util.SearchCriteria;
 
 /**
- * 
+ * Executes the given query string on the database and returns the results.
  * @author ambika_b
  *
  */
-
 public class QueryRepository {
 
 	//TODO: connection pool to be configured.
 	Connection connection;
 
+	/**
+	 * fetches the connection from the connection pool 
+	 * and uses this connection for the database operations.
+	 */
 	public QueryRepository() {
 		connection = DBUtil.getConnection();
 	}
 
+	/**
+	 * Fetches the count of all the results that matched the given query.
+	 * @param searchCriteria
+	 * @return
+	 * @throws SQLException
+	 */
 	public int getTotalCount(SearchCriteria searchCriteria) throws SQLException {
 		String queryString = "select count(1) from (" + searchCriteria.getSearchString() + ") alias";
 		Statement statement = connection.createStatement();
@@ -36,7 +46,16 @@ public class QueryRepository {
 		return count;
 	}
 
-	public List<HashMap<String, Object>> fetchResults(SearchCriteria searchCriteria) throws SQLException {
+	/**
+	 * Fetches the sorted result set on execution of the query. 
+	 * The results are fetched only for the given page number.
+	 * Pagination is applied by calculating the offset and the limit.
+	 * The results are sorted based on the name of the chosen column name.
+	 * @param searchCriteria
+	 * @return
+	 * @throws SQLException
+	 */
+	public List<LinkedHashMap<String, Object>> fetchResults(SearchCriteria searchCriteria) throws SQLException {
 		int tableLoad = searchCriteria.getNumberOfRecords();
 		int offset = ((searchCriteria.getReqPageNo() - 1) * tableLoad);
 		String queryString = searchCriteria.getSearchString() 
@@ -47,10 +66,10 @@ public class QueryRepository {
 		ResultSetMetaData metaData = rs.getMetaData();
 
 		int columnCount = metaData.getColumnCount();
-		List<HashMap<String, Object>> resultSet = new ArrayList<HashMap<String, Object>>();
+		List<LinkedHashMap<String, Object>> resultSet = new ArrayList<LinkedHashMap<String, Object>>();
 		
 		while (rs.next()) {
-			HashMap<String, Object> row = new HashMap<String, Object>();
+			LinkedHashMap<String, Object> row = new LinkedHashMap<String, Object>();
 			for (int i = 1; i <= columnCount; i++) { 
 				row.put(metaData.getColumnLabel(i), rs.getObject(i));
 			}

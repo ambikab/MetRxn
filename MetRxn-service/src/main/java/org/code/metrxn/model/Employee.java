@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * image model (as stored in the db)
+ * Corresponds to the employee table in the database.
  * @author ambika_b
  *
  */

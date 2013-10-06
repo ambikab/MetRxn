@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 
 /**
@@ -31,6 +32,8 @@ public class DBUtil {
 				String password = prop.getProperty("password");
 				Class.forName(driver);
 				connection = DriverManager.getConnection(url, user, password);
+				Statement statement=  connection.createStatement();
+				statement.executeUpdate("set group_concat_max_len = 1500000");
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (SQLException e) {

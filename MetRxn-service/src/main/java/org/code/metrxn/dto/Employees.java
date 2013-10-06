@@ -9,7 +9,9 @@ import org.code.metrxn.model.Employee;
 /**
  * 
  * @author ambika_b
- *
+ * Contains the list of {@link Employee}
+ * This is used as a wrapper for making the required conversions on the employee object
+ * as rendered to the requested resource.
  */
 
 @XmlRootElement

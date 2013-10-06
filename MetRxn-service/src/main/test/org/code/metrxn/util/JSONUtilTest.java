@@ -21,7 +21,7 @@ public class JSONUtilTest {
 		result.put("empId", "935");
 		List<HashMap<String, Object>> results = new ArrayList<HashMap<String, Object>>();
 		results.add(result);
-		viewResource = new ViewResource(results, 1, 1);
+		viewResource = new ViewResource();
 	}
 	
 	public static void main(String args[]) {
