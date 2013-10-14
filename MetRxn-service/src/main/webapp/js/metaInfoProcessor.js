@@ -1,21 +1,25 @@
 //TODO : what goes into the href attribute?!
 function createAnchors(key, value, type) {
 	if (type == 'anchor') {
-		aEnd = "<a class = 'searchLinks'>";
-		aBegin = "<a href = 'http://localhost:8080/MetRxn-service/services/queries/results'>";
+		aEnd = "<a >";
+		aBegin = "<a class = 'searchLinks' href = 'http://localhost:8080/MetRxn-service/services/queries/results'>NAD+</a><span></span>";
 		return aBegin + value + aEnd;
 	}
 }
 
-$(".searchLinks").click (function(e) {
-	e.preventDefault();
-	reqPgNoTwo = 1;
-	var url = ""; //TODO: fetch from the search results.
-	searchResults(url,"One", getSearchResults1(searchVal, 'test'),reqPgNoTwo, "source", sortOrder);
-	searchResults(url,"Two", getSearchResults2(searchVal, 'test'),reqPgNoTwo, "source", sortOrder);
-	searchResults(url,"Three", getSearchResults3(searchVal, 'test'),reqPgNoTwo, "source", sortOrder);
-	return false;
+$(document).ready(function(){
+$(".searchLinks").live('click', function(e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+		var searchText = $(this).text();
+		searchVal = searchText;
+		searchType = $(this).parent().children('span:first').text();
+		searchResults(url,"One", getSearchResults1(searchText, searchType),reqPgNoTwo, "sources", sortOrder);
+		searchResults(url,"Two", getSearchResults2(searchText, searchType),reqPgNoTwo, "source", sortOrder);
+		searchResults(url,"Three", getSearchResults3(searchText,searchType),reqPgNoTwo, "source", sortOrder);
+    });
 });
+
 
 function searchResults (url, tableId, query, requestedPageNumber, sortCol, sortOrder) {
 	var pathParams = "pageNumber=" + requestedPageNumber + "&sortCol=" + sortCol + "&sortOrder=" + sortOrder + "&queryString=" + encodeURIComponent(query); 

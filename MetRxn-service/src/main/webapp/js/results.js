@@ -61,11 +61,11 @@ function fetchJSONResults (tableId, query, requestedPageNumber, sortCol, sortOrd
 						rowHead = rowHead + " <th> <a id = '"+ key + "' href='#'>" + key + "</th>";
 						rowData = rowData + " <td> " + value + "</td> ";
 					});
-					rowHead = rowHead + " <th> Anchor Tags</th>";
+					rowHead = rowHead ;
 					var rowEnd =  "</tr>";
 					if (header != '1')
 						$("#resultsTable"+tableId + " thead").html(rowBegin + rowHead + rowEnd);
-					$("#resultsTable"+tableId + " tbody").append(rowBegin + testData + rowData +  rowEnd );
+					$("#resultsTable"+tableId + " tbody").append(rowBegin + rowData +  rowEnd );
 					header = '1';
 				});
 			}				

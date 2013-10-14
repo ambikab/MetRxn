@@ -1,0 +1,19 @@
+/** uploader.html **/
+#searchResultsOne  {
+	margin-left : 25%;
+}
+
+.updateContainer {
+	text-align:center;
+}
+
+.table-bordered th, .table-bordered td {
+	border-left : none;
+	border-bottom : none;
+	border-top : none;
+	border-right : none;
+	text-align : center;
+}
+.table-bordered {
+	border-style: solid none;
+}
