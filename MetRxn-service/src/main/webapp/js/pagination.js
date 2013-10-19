@@ -5,6 +5,10 @@ next = 0;
 sortOrder = 'ASC';
 sortCol =  'empId';
 searchVal = '';
+sortOrderOne = 'ASC';
+sortOrderTwo = 'ASC';
+sortOrderThree = 'ASC';
+currentSortValue = '';
 
 function chooseSortOrder(currentOrder) {
 	if (currentOrder === 'ASC')
@@ -36,17 +40,9 @@ function placeSortArrows(colName, arrowLabel) {
 	$("#" + colName + "Sort").html("<i class = 'sortActive " + arrowLabel + "'>");
 }
 
-$("#empName").click(function() {
-	if (sortCol == 'empName') {
-		sortOrder = chooseSortOrder(sortOrder);
-	} else {
-		sortCol = 'empName';
-		sortOrder = 'ASC';
-	}	
-	placeSortArrows(sortCol, chooseSortArrows(sortOrder));
-	fetchJSONResults(reqPgNo, sortCol, sortOrder);
-});
-
+/**
+ * binding pagination elements with the result fetching ajax calls.
+ */
 $("#prevOne").click (function() {
 	reqPgNoOne = reqPgNoOne - 1;
 	fetchJSONResults("One", getSearchResults(searchVal, 'test'),reqPgNoOne, "source", sortOrder);

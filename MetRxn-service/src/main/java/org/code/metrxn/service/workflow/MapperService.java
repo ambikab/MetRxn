@@ -20,13 +20,13 @@ import com.sun.jersey.multipart.FormDataParam;
  */
 @Path("/entity/uploader/mapper")
 public class MapperService {
-
+/*
 	static MapperRepository mapperRepository = new MapperRepository();
 
-	/**
+	*//**
 	 * updates the mapping stored in the database.
 	 * @param mappingData
-	 */
+	 *//*
 	@Consumes(MediaType.APPLICATION_JSON)
 	@POST
 	public String updateMappings(@FormDataParam("updatedMapping") String mappingData, @FormDataParam("sessionId") String uId) {
@@ -35,7 +35,7 @@ public class MapperService {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			TableMapper tableMapper = mapper.readValue(mappingData, TableMapper.class);
-			updateMapping = mapperRepository.updateMapping(tableMapper);
+			//updateMapping = mapperRepository.updateMapping(tableMapper);
 		} catch (JsonParseException e) {
 			System.out.println("Exception occured while converting into JSON");
 			e.printStackTrace();
@@ -51,5 +51,5 @@ public class MapperService {
 		else
 			return "sucessfully updated the mappings";
 	}
-
+*/
 }

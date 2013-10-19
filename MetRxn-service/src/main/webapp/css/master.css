@@ -7,6 +7,10 @@ body {
 	padding-bottom: 20px;
 }
 
+#imgDiv {
+	text-align: center;
+}
+
 .menu>.active>a,.menu>.active>a:hover {
 	background-color: #30339C;
 	color: #FFFFFF;
@@ -91,5 +95,10 @@ body {
 	text-align: center;
 }
 
+.pagination {
+	text-align: right;
+}
 
-
+.table th, .table td{
+	word-wrap: break-word;
+}

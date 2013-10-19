@@ -5,7 +5,7 @@ $("#searchBtn").click (function() {
 		alert("Search string cannot be empty!");
 		return 0;
 	}
-
+	showImage();
 	sortOrder = 'ASC';
 	searchVal = $("#appendedInputButtons").val();
 	placeSortArrows("source", chooseSortArrows(sortOrder));

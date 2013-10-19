@@ -28,3 +28,7 @@ function getSearchResults3(searchTerm, optionSel) {
 	+ " and A.smiles_standard_hash = B.SMILES_hash "
 	+ " group by B.source ";
 }
+
+function getImageSearch(imageName) {
+	return "select images from FormulaChargeDistribution where idFormulaChargeDistribution = 1 ";
+}

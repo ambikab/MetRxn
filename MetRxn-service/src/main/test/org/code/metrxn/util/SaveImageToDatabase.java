@@ -5,18 +5,19 @@ import java.io.*;
 class SaveImageToDatabase {
 	public static void main(String[] args) throws SQLException {
 		Connection connection = null;
-		String connectionURL = "jdbc:mysql://localhost:3306/images";
+		String connectionURL = "jdbc:mysql://costas4086.engr.psu.edu:3306/test_Metrxn_version_2";
 		PreparedStatement psmnt = null;
 		FileInputStream fis;
+
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			connection = DriverManager.getConnection(connectionURL, "root", "root");
-			File image = new File("C:/pictures/fish.jpg");
+			connection = DriverManager.getConnection(connectionURL, "ambika", "ambika");
+			File image = new File("C:/pictures/nad.jpg");
 			psmnt = connection.prepareStatement
-					("insert into images "+ "values(?,?)");
-			psmnt.setString(1,"fish");
+					("update FormulaChargeDistribution set images = ? where idFormulaChargeDistribution = ?");
+			psmnt.setString(2,"1");
 			fis = new FileInputStream(image);
-			psmnt.setBinaryStream(2, (InputStream)fis, (int)(image.length()));
+			psmnt.setBinaryStream(1, (InputStream)fis, (int)(image.length()));
 			int s = psmnt.executeUpdate();
 			if(s>0) {
 				System.out.println("Uploaded successfully !");
