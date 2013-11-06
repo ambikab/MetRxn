@@ -1,7 +1,6 @@
 package org.code.metrxn.model.uploader;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,11 +12,11 @@ import java.util.Map;
 
 public class TableMapper {
 
-	String entityName;
+	public String entityName;
 	
-	String id;
+	public String id;
 	
-	Map<String, ArrayList<ColumnMapping>> mapper;
+	public Map<String, ArrayList<ColumnMapping>> mapper;
 
 	public TableMapper() {
 	}

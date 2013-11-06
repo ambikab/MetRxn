@@ -32,3 +32,10 @@ function getSearchResults3(searchTerm, optionSel) {
 function getImageSearch(imageName) {
 	return "select images from FormulaChargeDistribution where idFormulaChargeDistribution = 1 ";
 }
+
+function getFileColumnData(workFlowId, columnName) {
+	return "select group_concat(distinct columnData) from entity_data " 
+		+ "where workFlowId = '" + workFlowId + "'" 
+		+ "and columnName = '"+ columnName 
+		+ "' group by workFlowId,columnName";
+}

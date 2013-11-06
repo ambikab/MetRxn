@@ -1,10 +1,10 @@
 /** uploader.html **/
-#searchResultsOne  {
-	margin-left : 25%;
-}
-
 .updateContainer {
 	text-align:center;
+}
+
+#resultsTableOne td:hover {
+    cursor: pointer;
 }
 
 .table-bordered th, .table-bordered td {
@@ -14,6 +14,22 @@
 	border-right : none;
 	text-align : center;
 }
+
 .table-bordered {
 	border-style: solid none;
+}
+
+/** active cell selector **/
+.table-bordered .update {
+	border:1px solid green;
+	background-color: #DFF0D8;
+}
+
+.table-bordered .nonZeroClass{
+	border:1px solid blue;
+	background-color: #FCF8E3;
+}
+
+.success {
+	background-color: #DFF0D8;
 }
