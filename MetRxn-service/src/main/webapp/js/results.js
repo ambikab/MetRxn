@@ -1,4 +1,11 @@
 // displays the search results on click of the search button
+$('#appendedInputButtons').keypress(function(e){
+        if(e.which == 13){//Enter key pressed
+            $('#searchBtn').click();//Trigger search button click event
+        }
+});
+
+
 $("#searchBtn").click (function() {
 	if ($("#appendedInputButtons").val().length == 0) {
 		//addAlert("Warning", "Search string cannot be empty!!") TODO : Use bootstrap alert to show warnings.

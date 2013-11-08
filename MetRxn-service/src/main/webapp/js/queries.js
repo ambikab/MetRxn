@@ -45,3 +45,7 @@ function getFileColumnData(workFlowId, columnName) {
 		+ "and columnName = '"+ columnName 
 		+ "' group by workFlowId,columnName";
 }
+
+function getAutoComplete1 (searchTerm) {
+	return "select distinct `Metabolite synonyms` `synonyms` from test_Metrxn_version_2.searchResults where `Metabolite synonyms` like '" + searchTerm + "%'";
+}
