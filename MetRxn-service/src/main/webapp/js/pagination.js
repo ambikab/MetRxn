@@ -43,6 +43,7 @@ function placeSortArrows(colName, arrowLabel) {
 /**
  * binding pagination elements with the result fetching ajax calls.
  */
+/*changed getSearchResults to getSearchResults1,2,3*/
 $("#prevOne").click (function() {
 	reqPgNoOne = reqPgNoOne - 1;
 	fetchJSONResults("One", getSearchResults1(searchVal, 'test'),reqPgNoOne, "source", sortOrder);
