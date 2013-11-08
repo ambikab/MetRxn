@@ -45,37 +45,37 @@ function placeSortArrows(colName, arrowLabel) {
  */
 $("#prevOne").click (function() {
 	reqPgNoOne = reqPgNoOne - 1;
-	fetchJSONResults("One", getSearchResults(searchVal, 'test'),reqPgNoOne, "source", sortOrder);
+	fetchJSONResults("One", getSearchResults1(searchVal, 'test'),reqPgNoOne, "source", sortOrder);
 	return false;
 });
 
 $("#nextOne").click (function() {
 	reqPgNoOne = reqPgNoOne + 1;
-	fetchJSONResults("One", getSearchResults(searchVal, 'test'),reqPgNoOne, "source", sortOrder);
+	fetchJSONResults("One", getSearchResults1(searchVal, 'test'),reqPgNoOne, "source", sortOrder);
 	return false;
 });
 
 $("#prevTwo").click (function() {
 	reqPgNoTwo = reqPgNoTwo - 1;
-	fetchJSONResults("Two", getSearchResults(searchVal, 'test'),reqPgNoTwo, "source", sortOrder);
+	fetchJSONResults("Two", getSearchResults2(searchVal, 'test'),reqPgNoTwo, "source", sortOrder);
 	return false;
 });
 
 $("#nextTwo").click (function() {
 	reqPgNoTwo = reqPgNoTwo + 1;
-	fetchJSONResults("Two", getSearchResults(searchVal, 'test'),reqPgNoTwo, "source", sortOrder);
+	fetchJSONResults("Two", getSearchResults2(searchVal, 'test'),reqPgNoTwo, "source", sortOrder);
 	return false;
 });
 
 $("#prevThree").click (function() {
 	reqPgNoThree = reqPgNoThree - 1;
-	fetchJSONResults("Three", getSearchResults(searchVal, 'test'),reqPgNoThree, "source", sortOrder);
+	fetchJSONResults("Three", getSearchResults3(searchVal, 'test'),reqPgNoThree, "source", sortOrder);
 	return false;
 });
 
 $("#nextThree").click (function() {
 	reqPgNoThree = reqPgNoThree + 1;
-	fetchJSONResults("Three", getSearchResults(searchVal, 'test'),reqPgNoThree, "source", sortOrder);
+	fetchJSONResults("Three", getSearchResults3(searchVal, 'test'),reqPgNoThree, "source", sortOrder);
 	return false;
 });
 
