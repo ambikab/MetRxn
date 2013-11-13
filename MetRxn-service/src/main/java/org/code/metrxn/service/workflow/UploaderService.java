@@ -21,7 +21,6 @@ import org.code.metrxn.model.uploader.TableMapper;
 import org.code.metrxn.repository.workflow.MapperRepository;
 import org.code.metrxn.util.JsonUtil;
 import org.code.metrxn.util.Logger;
-
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 
@@ -50,7 +49,7 @@ public class UploaderService {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	public String uploadFile(@FormDataParam("file") InputStream uploadedInputStream, @FormDataParam("file") FormDataContentDisposition fileInfo, @FormDataParam("entityType") String entityType, @FormDataParam("fileType") String fileType) {
-		String splitField = "SF", source = "SOURCE";
+		String splitField = "\\", source = "SOURCE";
 		String delimitter = ",";
 		TableMapper tableMapper = null;
 		Map<String, FileColumn> tableData = null;

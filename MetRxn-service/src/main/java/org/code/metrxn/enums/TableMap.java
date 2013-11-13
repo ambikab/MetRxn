@@ -8,7 +8,7 @@ package org.code.metrxn.enums;
  */
 public enum TableMap {
 
-	METABOLITE("metabolite", "metabolitesUpload");
+	METABOLITE("metabolite", "metabolitesUpload"), REACTIONS("rections", "reactionsUpload");
 	
 	private String fileValue;
 	

@@ -52,7 +52,7 @@ public class UploaderServiceTest {
 		Logger.info("creating connection", UploaderServiceTest.class);
 		createConnection();
 		uploaderService = new UploaderService(mapperRepository);
-		/*File file = new File("R:/univproject/otherDocs/sample.csv");
+		File file = new File("R:/univproject/otherDocs/sample.csv");
 		String delimitter = ",";
 		String entityType = "METABOLITE";
 		TableMapper tableMapper = null;
@@ -62,7 +62,7 @@ public class UploaderServiceTest {
 			FileInputStream uploadedInputStream = new FileInputStream(file);
 			workflowId = UUID.randomUUID().toString();
 			Logger.info("reading contents", UploaderServiceTest.class);
-			tableData = uploaderService.readContents(uploadedInputStream, workflowId, entityType, delimitter, "SYMBOL", "TESTFILE");
+			tableData = uploaderService.readContents(uploadedInputStream, workflowId, entityType, delimitter, "\\", "TESTFILE");
 			Logger.info("fetching mappings", UploaderServiceTest.class);
 			tableMapper = mapperRepository.fetchDbMappings(workflowId, entityType, tableData);
 			tableMapper.setId(workflowId);
@@ -70,8 +70,8 @@ public class UploaderServiceTest {
 		} catch (IOException e) {
 			System.out.println("Error in reading csv files.");
 			e.printStackTrace();
-		}*/
-		insertRepository.metabolitesUpload("12165525-4f79-4366-8e3a-67179ddf3d6a");
+		}
+		insertRepository.metabolitesUpload(workflowId);
 		//System.out.println(JsonUtil.toJsonForObject(tableMapper).toString());
 		
 	}

@@ -79,9 +79,21 @@ public class MapperRepository {
 				ArrayList<ColumnMapping> columnMappings = new ArrayList<ColumnMapping>(); 
 				for (java.util.Iterator<String> keys = contents.keySet().iterator(); keys.hasNext();) { 
 					String fileCol = keys.next();
-					String findMap = "select count(1) from " + tableName + " where " + colName + " in ( " + contents.get(fileCol).getData() + ")";
-					Statement psCount = connection.createStatement();
-					ResultSet rsCnt = psCount.executeQuery(findMap);
+					StringTokenizer pStmtTokens = new StringTokenizer(contents.get(fileCol).getData(), ",");
+					StringBuilder pStmtClause = new StringBuilder(" ");
+					int matches = pStmtTokens.countTokens();
+					if  ( matches > 0) {
+						pStmtClause.append(" where " + colName + " in ( ?");
+						for (int i = 2; i <= pStmtTokens.countTokens(); i++)
+							pStmtClause.append(", ?");
+						pStmtClause.append(")");
+					} 
+					String findMap = "select count(1) from " + tableName + pStmtClause.toString() ;
+					PreparedStatement psCount = connection.prepareStatement(findMap);
+					if (matches > 0) 
+					for (int i = 1; pStmtTokens.hasMoreTokens(); i++)
+						psCount.setString(i, pStmtTokens.nextToken());
+					ResultSet rsCnt = psCount.executeQuery();
 					rsCnt.next();
 					columnMappings.add(new ColumnMapping(fileCol, rsCnt.getInt(1)));
 					batchStatement.setString(2, tableName);
@@ -101,8 +113,9 @@ public class MapperRepository {
 			}
 			batchStatement.executeBatch();
 		} catch (SQLException e) {
+			e.printStackTrace();
 			Logger.error(e.getMessage(), MapperRepository.class);
-			Logger.error("Issue in fetching the image for database\n", MapperRepository.class);
+			Logger.error("Issues in storing the mapping into the database.\n", MapperRepository.class);
 		}
 		return new TableMapper(entityType,uId, mapper);
 	}
@@ -137,7 +150,7 @@ public class MapperRepository {
 			preparedStatement.setString(1, wId);
 			preparedStatement.setString(2, fileContents.toString());
 			preparedStatement.setString(3, entityName);
-			int rs = preparedStatement.executeUpdate();
+			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			Logger.error(" Error in storing raw contents of the file to entity_data", MapperRepository.class);
 			e.printStackTrace();
