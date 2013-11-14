@@ -61,7 +61,7 @@ public class InsertRepository {
 					Logger.info("inside values appender", InsertRepository.class);
 				}
 				Logger.info(insertData, InsertRepository.class);
-				insertStmt.executeUpdate();
+				insertPS.executeUpdate();
 			}
 		} catch (SQLException e) {
 			Logger.error("exception occured while populating the file data to the metabolite", InsertRepository.class);
