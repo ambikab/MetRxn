@@ -28,7 +28,6 @@
 			</div>
 			<!-- /.navbar -->
 		</div>
-		<div class="messages"> <!--  all alerts related to the page goes here!! --> </div>
 		<div class="workflow">
 			<ul class="breadcrumb">
 				<li class="active" id = "step1" >Upload<span class="divider"><i class= "icon-chevron-right"></i></span></li> 
@@ -37,12 +36,21 @@
 			</ul>
 		</div>
 		<br/>
+		<div class="notifications"> </div>
 		<div id="stepOneContents">
 			<form enctype="multipart/form-data">
-				 <input id="entityType" name="entityType" type="text" />
-				 <input id="fileType"  name="fileType" type="text" />
-				<p><input type="file" id = "fileContent" name="file" size="45" /> </p>
-				<input type="button" value="Upload It"   onClick="return uploadFile();"/> 
+				
+				<p> <input type="file" id = "fileContent" name="file" size="45" /> 
+					<select id="fileType" style = "margin-bottom:0;" class = "span1" >
+						<option value = "sbml">SBML</option>
+						<option value = "csv">CSV</option>
+					</select>
+					<select id="entityType" class = "span1" style = "margin-bottom:0;display:none;" >
+						<option value = "METABOLITE">Metabolite</option>
+						<option value = "REACTION" >Reaction</option>
+					</select>
+				</p>
+				<p> <button class = "btn btn-primary"  onClick="return uploadFile();"> Upload File </button> </p>
 			</form>
 		</div>
 		<div id="stepTwoContents" style="display: none">
@@ -57,6 +65,17 @@
 		
 	</div>
 	<!-- /container -->
+	<!-- confirmation dialog for SBML -->
+	<div id="dialog-confirm" style="display: none;" title="SBML Upload Summary">
+	<div id ="sbmlFileContents"> 
+		<table id = "sbmlFileCount">
+			<tr><td>Reaction count:</td><td><span id = "rxnCnt">15</span></td></tr>
+			<tr><td>Metabolite count</td><td><span id = "metaboliteCnt">25</span></td></tr>
+			<tr><td>Compartment Types:</td><td><span id = "compartmentCnt">30</span></td></tr>
+		</table>
+	</div>
+	</div>
+<!-- confirmation dialog ends here!! -->
 	<!-- modal pop up -->
 	<div id ="modalForm" style="display: none;">
 		<div id ="alertUser"><span id = "informationSpan" class="success"> </span></div>
@@ -82,14 +101,13 @@
 	<script type="text/javascript" src="js/metaInfoProcessor.js"></script>
 	<script type="text/javascript" src="js/results.js"></script>
 	<script type="text/javascript" src="js/queries.js"></script>
+	<script type="text/javascript" src="js/alert.js"></script>
 	<script type="text/javascript" src="js/jquery-1.8.3.js"></script>
 	<script type="text/javascript" src="js/jquery-ui-1.9.2.js"></script>
 	<script type="text/javascript" src="js/bootbox.min.js"></script>
 	<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
-	<script type="text/javascript"
-		src="js/jquery-ui-1.8.21.custom/development-bundle/ui/jquery.effects.core.js"></script>
-	<script type="text/javascript"
-		src="js/jquery-ui-1.8.21.custom/development-bundle/ui/jquery.effects.fade.js"></script>
+	<script type="text/javascript" src="js/jquery-ui-1.8.21.custom/development-bundle/ui/jquery.effects.core.js"></script>
+	<script type="text/javascript" src="js/jquery-ui-1.8.21.custom/development-bundle/ui/jquery.effects.fade.js"></script>
 	<script type="text/javascript" src="js/moment-1.6.2.min.js"></script>
 
 </body>

@@ -15,12 +15,22 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.xml.stream.XMLStreamException;
 import org.code.metrxn.model.uploader.FileColumn;
 import org.code.metrxn.model.uploader.FileData;
+import org.code.metrxn.model.uploader.Rxn;
+import org.code.metrxn.model.uploader.SBMLContent;
+import org.code.metrxn.model.uploader.SpeciesRef;
 import org.code.metrxn.model.uploader.TableMapper;
 import org.code.metrxn.repository.workflow.MapperRepository;
+import org.code.metrxn.repository.workflow.SBMLRepository;
 import org.code.metrxn.util.JsonUtil;
 import org.code.metrxn.util.Logger;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLReader;
+import org.sbml.jsbml.SpeciesReference;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 
@@ -30,12 +40,15 @@ public class UploaderService {
 
 	static MapperRepository mapperRepository ;
 	
-	public UploaderService() {
-		mapperRepository = new MapperRepository();
-	}
+	static SBMLRepository sbmlRepository;
 	
 	public UploaderService(MapperRepository mapperRepository) {
 		this.mapperRepository = mapperRepository;
+	}
+
+	public UploaderService() {
+		mapperRepository = new MapperRepository();
+		sbmlRepository = new SBMLRepository();
 	}
 
 	/**
@@ -45,11 +58,12 @@ public class UploaderService {
 	 * @param fileDetail
 	 * @return
 	 */
+	@Path("/csv")
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String uploadFile(@FormDataParam("file") InputStream uploadedInputStream, @FormDataParam("file") FormDataContentDisposition fileInfo, @FormDataParam("entityType") String entityType, @FormDataParam("fileType") String fileType) {
-		String splitField = "\\", source = "SOURCE";
+	public String uploadCSVFile(@FormDataParam("file") InputStream uploadedInputStream, @FormDataParam("file") FormDataContentDisposition fileInfo, @FormDataParam("entityType") String entityType, @FormDataParam("fileType") String fileType) {
+		String splitField = "\\", source = "SOURCE"; //TODO : remove fields as they are captured in the modal pop up of the next screen.
 		String delimitter = ",";
 		TableMapper tableMapper = null;
 		Map<String, FileColumn> tableData = null;
@@ -58,6 +72,7 @@ public class UploaderService {
 			tableData = readContents(uploadedInputStream, workflowId, entityType, delimitter, splitField, source);
 			tableMapper = mapperRepository.fetchDbMappings(workflowId, entityType, tableData);
 			tableMapper.setId(workflowId);
+
 		} catch (IOException e) {
 			Logger.error("Error in reading csv files." , UploaderService.class);
 			e.printStackTrace();
@@ -65,6 +80,48 @@ public class UploaderService {
 		return JsonUtil.toJsonForObject(tableMapper).toString();
 	}
 
+	@Path("/sbml")
+	@POST
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String uploadSBMLFile(@FormDataParam("file") InputStream uploadedInputStream, @FormDataParam("file") FormDataContentDisposition fileInfo, @FormDataParam("entityType") String entityType, @FormDataParam("fileType") String fileType) {
+		Map<String, String> response = new HashMap<String, String>();
+		String workflowId = UUID.randomUUID().toString();
+		response.put("workflowId",workflowId);
+		//TODO: store it to the entity_file table.
+		try {
+			SBMLDocument document = SBMLReader.read(uploadedInputStream);
+			//SBMLReader.rea
+			Model model = document.getModel();
+			response.put("rxnCnt", model.getNumReactions()+"");
+			response.put("speciesCnt",  model.getNumSpecies()+"");
+			response.put("compartmentCnt", model.getNumCompartments()+"");
+			SBMLContent content = new SBMLContent(model.getNumReactions(), model.getNumSpecies(), model.getNumCompartments(), model.getVersion(), new ArrayList<Rxn>());
+			for (Reaction rxn : model.getListOfReactions()) {
+				Rxn reaction = new Rxn();
+				reaction.setName(rxn.getName());
+				//TODO: rxn.getNotes() to be saved in col rxnNotes.
+				reaction.setSboTerm(rxn.getSBOTerm());
+				reaction.setSboTermId(rxn.getSBOTermID());
+				ArrayList<SpeciesRef> products = new ArrayList<SpeciesRef>(); 
+				for (SpeciesReference element : rxn.getListOfProducts()) {
+					products.add(new SpeciesRef(element.getStoichiometry(),element.getElementName(),element.getSpecies(), element.getId()));
+				}
+				ArrayList<SpeciesRef> reactants = new ArrayList<SpeciesRef>();
+				for (SpeciesReference element : rxn.getListOfReactants()) {
+					reactants.add(new SpeciesRef(element.getStoichiometry(),element.getElementName(),element.getSpecies(), element.getId()));
+				}
+				reaction.setProducts(products);
+				reaction.setReactants(reactants);
+				content.getRxns().add(reaction);
+			}
+			sbmlRepository.insertSbml(content, workflowId);
+		} catch (XMLStreamException e) {
+			Logger.error("error in fetching the contents of the SBML file.", UploaderService.class);
+			e.printStackTrace();
+		}
+		return JsonUtil.toJsonForObject(response).toString();
+	}
 	/**
 	 * Reads the content of the uploaded CSV file.
 	 * @param uploadedInputStream

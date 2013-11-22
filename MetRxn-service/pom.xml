@@ -84,7 +84,11 @@
 			<artifactId>mimepull</artifactId>
 			<version>1.9</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.sbml.jsbml</groupId>
+			<artifactId>jsbml</artifactId>
+			<version>0.8</version>
+		</dependency>
 	</dependencies>
 	<properties>
 		<jersey.version>1.12</jersey.version>

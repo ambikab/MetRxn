@@ -7,6 +7,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import org.code.metrxn.repository.workflow.MapperRepository;
+import org.code.metrxn.repository.workflow.SBMLRepository;
 import org.code.metrxn.util.JsonUtil;
 import org.code.metrxn.util.Logger;
 import org.codehaus.jettison.json.JSONException;
@@ -23,6 +24,8 @@ import org.codehaus.jettison.json.JSONObject;
 public class MapperService {
 
 	static MapperRepository mapperRepository = new MapperRepository();
+	
+	static SBMLRepository sbmlRepository = new SBMLRepository();
 
 	/**
 	 * updates the mapping stored in the database.
@@ -66,5 +69,12 @@ public class MapperService {
 			return "error in updating mappings";
 		else
 			return "sucessfully updated the mappings";
+	}
+	
+	@Path("/sbml")
+	@POST
+	public String confirmMappings(@FormParam("workflowId") String workflowId) {
+		sbmlRepository.updateStatus(workflowId);
+		return null;
 	}
 }
