@@ -2,6 +2,7 @@ package org.code.metrxn.service;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -44,7 +45,7 @@ public class UploaderServiceTest {
 
 	static MapperRepository mapperRepository;
 
-	static InsertRepository insertRepository;
+	//static InsertRepository insertRepository;
 
 	static SBMLRepository sbmlRepository;
 
@@ -61,8 +62,8 @@ public class UploaderServiceTest {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			connection = DriverManager.getConnection(connectionURL, "ambika", "ambika");
 			mapperRepository = new MapperRepository(connection);
-			insertRepository = new InsertRepository(connection);
 			sbmlRepository = new SBMLRepository(connection);
+			uploaderService = new UploaderService(mapperRepository , sbmlRepository);
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
@@ -74,12 +75,14 @@ public class UploaderServiceTest {
 		}
 	}
 
-	public static void main (String[] args) {
-		uploaderService = new UploaderService(mapperRepository);
+	public static void main (String[] args) throws FileNotFoundException {
 		File file = new File("R:/univproject/otherDocs/test/sbml.xml");
+		FileInputStream uploadedInputStream = new FileInputStream(file);
 		String workflowId = UUID.randomUUID().toString();
 		try {
-			SBMLDocument document = SBMLReader.read(file);
+			StringBuilder fileContents = new StringBuilder(uploaderService.getFileContents(uploadedInputStream, workflowId));
+			SBMLDocument document = SBMLReader.read(fileContents.toString());
+			mapperRepository.saveRawFileData(fileContents, workflowId, "SBML");
 			Model model = document.getModel();
 			SBMLContent content = new SBMLContent(model.getNumReactions(), model.getNumSpecies(), model.getNumCompartments(), model.getVersion(), new ArrayList<Rxn>());
 			for (Reaction rxn : model.getListOfReactions()) {
@@ -102,8 +105,7 @@ public class UploaderServiceTest {
 			sbmlRepository.insertSbml(content, workflowId);
 			sbmlRepository.updateStatus(workflowId);
 		} catch (XMLStreamException e) {
-		} catch (IOException e) {
-		}
+		} 
 		Logger.info("saved to the db!!", UploaderServiceTest.class);
 	}
 
@@ -113,7 +115,6 @@ public class UploaderServiceTest {
 		TableMapper tableMapper = null;
 		String workflowId = "";
 		Map<String, FileColumn> tableData = null;
-		uploaderService = new UploaderService(mapperRepository);
 		File file = new File("R:/univproject/otherDocs/test/sbml.xml");
 		try {
 			FileInputStream uploadedInputStream = new FileInputStream(file);
@@ -128,7 +129,7 @@ public class UploaderServiceTest {
 			System.out.println("Error in reading csv files.");
 			e.printStackTrace();
 		}
-		insertRepository.metabolitesUpload(workflowId);
+		//insertRepository.metabolitesUpload(workflowId);
 		//System.out.println(JsonUtil.toJsonForObject(tableMapper).toString());
 	}
 }

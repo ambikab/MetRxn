@@ -39,10 +39,10 @@ import com.sun.jersey.multipart.FormDataParam;
 public class UploaderService {
 
 	static MapperRepository mapperRepository ;
-	
+
 	static SBMLRepository sbmlRepository;
-	
-	public UploaderService(MapperRepository mapperRepository) {
+
+	public UploaderService(MapperRepository mapperRepository, SBMLRepository sbmlRepository) {
 		this.mapperRepository = mapperRepository;
 	}
 
@@ -88,10 +88,10 @@ public class UploaderService {
 		Map<String, String> response = new HashMap<String, String>();
 		String workflowId = UUID.randomUUID().toString();
 		response.put("workflowId",workflowId);
-		//TODO: store it to the entity_file table.
 		try {
-			SBMLDocument document = SBMLReader.read(uploadedInputStream);
-			//SBMLReader.rea
+			StringBuilder fileContents = new StringBuilder(getFileContents(uploadedInputStream, workflowId));
+			SBMLDocument document = SBMLReader.read(fileContents.toString());
+			mapperRepository.saveRawFileData(fileContents, workflowId, "SBML");
 			Model model = document.getModel();
 			response.put("rxnCnt", model.getNumReactions()+"");
 			response.put("speciesCnt",  model.getNumSpecies()+"");
@@ -122,6 +122,24 @@ public class UploaderService {
 		}
 		return JsonUtil.toJsonForObject(response).toString();
 	}
+
+	public String getFileContents(InputStream uploadedInputStream, String workFlowId) {
+		BufferedReader ipReader = new BufferedReader(new InputStreamReader (uploadedInputStream));
+		StringBuilder fileContents = new StringBuilder();
+		String ipLine = null;
+		try {
+			ipLine = ipReader.readLine();
+			while(ipLine != null){
+				fileContents.append(ipLine);
+				ipLine = ipReader.readLine();
+			}
+		} catch (IOException e) {
+			Logger.error("error in saving the SBML file contetns to the database.", UploaderService.class);
+			e.printStackTrace();
+		}
+		return fileContents.toString();
+	}
+
 	/**
 	 * Reads the content of the uploaded CSV file.
 	 * @param uploadedInputStream
