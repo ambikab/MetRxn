@@ -21,18 +21,10 @@ import org.code.metrxn.repository.workflow.SBMLRepository;
 import org.code.metrxn.repository.dml.*;
 import org.code.metrxn.service.workflow.UploaderService;
 import org.code.metrxn.util.Logger;
-import org.sbml.jsbml.Compartment;
-import org.sbml.jsbml.Event;
-import org.sbml.jsbml.FunctionDefinition;
-import org.sbml.jsbml.InitialAssignment;
-import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
-import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
-import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 
 /**

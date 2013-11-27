@@ -92,7 +92,7 @@ $(document).ready(function(){
 	$("#dialog-confirm" ).dialog({
 					autoOpen: false,
 					resizable: true,
-					height:150,
+					height:250,
 					width: 500,
 					modal: true,
 					buttons: {
@@ -105,6 +105,30 @@ $(document).ready(function(){
 							success: function() {
 								$( this ).dialog( "close" );	
 								addAlert('success','SBML contents saved to the database.');
+								var pathParams = "pageNumber=1" + "&sortCol=workflowId" + "&sortOrder=ASC" + "&queryString=" + getSBMLData(workFlowId); 
+								$.ajax({
+									url: 'http://localhost:8080/MetRxn-service/services/queries/results',  //Server script to process data
+									type: 'POST',
+									data: pathParams,
+									success: function(result) {
+										$("#stepTwoContentsSBML").show();
+										var index = 0;
+										$.each(result.resultSet, function(index, object) {
+											var html = "<tr>";
+											var header = "<thead><tr>";
+											$.each(object, function(key, value) {
+												if(index === 0) {
+													header  = header + "<th>" + key.toUpperCase() + "</th>";
+												}
+												html = html + "<td>" + value + "</td>";
+											});
+											html = html + "</tr>";
+											index = 1;
+											$("#SBMLResultsTable").append(header + "</tr></thead>");
+											$("#SBMLResultsTable").append(html);
+										});
+									}
+								});
 							},
 							error: function(jqXHR, textStatus, errorThrown)
 							{
@@ -204,7 +228,7 @@ function updateMetaInformation() {
 		data: pathParams,
 		dataType: "json",
 		success: function(data) {
-			addAlert("success","Mappings updated sucessfully.");	
+			addAlert("success","Mappings updated sucessfully.");
 		}
 	})
 	return false;

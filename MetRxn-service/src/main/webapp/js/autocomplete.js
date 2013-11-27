@@ -1,19 +1,29 @@
 $( "#appendedInputButtons" ).autocomplete({
       source: function( request, response ) {
-		var query = getAutoComplete1(request.term);
-		var pathParams = "pageNumber=1" + "&sortCol=1"  + "&sortOrder=" + sortOrder + "&queryString=" + encodeURIComponent(query);;
+		//var searchTerm = getAutoComplete1(request.term);
+		var data = '{"query": {"query_string" : {"fields" : ["metab","rxn"],"query" : "'+ request.term + '*"}}}';
+		//var pathParams = "pageNumber=1" + "&sortCol=1"  + "&sortOrder=" + sortOrder + "&queryString=" + encodeURIComponent(query);;
         $.ajax({
-		  type: "POST",	
-          url: "http://localhost:8080/MetRxn-service/services/queries/results",
-          dataType: "json",
-          data: pathParams,
+		  type: "GET",	
+          url: "http://localhost:9200/autocomplete/compounds/_search?q="+ request.term +"*",
+          dataType: "jsonp",
           success: function( data ) {
-			var suggestions = data.resultSet;
-			response( $.map( suggestions, function( item ) {
-              return {
-                label: item.synonyms ,
-                value: item.synonyms
-              }
+			response( $.map( data.hits.hits, function( item ) {
+				var source = item["_source"];
+				var labelvalue = "TEST";
+				if (typeof  source.metab === 'undefined' ) {
+					labelvalue = source.rxn;
+					selectLabel = source.rxn + "(RXN)";
+				} else {
+					labelvalue = source.metab;
+					selectLabel = source.metab + "(METAB)";
+				}
+				return {
+						
+							label:  selectLabel,
+							value: labelvalue
+						
+				}
             }));
           }
         });
