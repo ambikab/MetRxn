@@ -1,3 +1,28 @@
+function getCookie(c_name) {
+	var c_value = document.cookie;
+	var c_start = c_value.indexOf(" " + c_name + "=");
+	if (c_start == -1)
+	{
+	c_start = c_value.indexOf(c_name + "=");
+	}
+	if (c_start == -1)
+	{
+	c_value = null;
+	}
+	else
+	{
+	c_start = c_value.indexOf("=", c_start) + 1;
+	var c_end = c_value.indexOf(";", c_start);
+	if (c_end == -1)
+	{
+		c_end = c_value.length;
+	}
+	c_value = unescape(c_value.substring(c_start,c_end));
+	}
+	return c_value;
+}
+
+
 // displays the search results on click of the search button
 $('#appendedInputButtons').keypress(function(e){
         if(e.which == 13){//Enter key pressed
@@ -26,7 +51,7 @@ $("#searchBtn").click (function() {
 });
 
 function fetchJSONResults (tableId, query, requestedPageNumber, sortCol, sortOrder) {
-	var pathParams = "pageNumber=" + requestedPageNumber + "&sortCol=" + sortCol + "&sortOrder=" + sortOrder + "&queryString=" + encodeURIComponent(query); 
+	var pathParams = "pageNumber=" + requestedPageNumber + "&sessionId=" + getCookie("session") + "&sortCol=" + sortCol + "&sortOrder=" + sortOrder + "&queryString=" + encodeURIComponent(query); 
 	$.ajax({
 		type: "POST",
 		url: "http://localhost:8080/MetRxn-service/services/queries/results",
@@ -36,9 +61,11 @@ function fetchJSONResults (tableId, query, requestedPageNumber, sortCol, sortOrd
 			result = jQuery.parseJSON(JSON.stringify(result));
 			$("#resultsTable"+tableId + " tbody").empty();
 			resultsMode(tableId);
-			if ( result.isEmpty == true ) {
-				var rowData = "<tr><td colspan = '4'>No results matched your search!! </td></tr>";
+			if ( ! result['sessionId']) {
+				var rowData = "<tr><td colspan = '4'>Invalid session!! Please log in to continue. </td></tr>";
 				$("#resultsTable"+tableId + " tbody").append(rowData);
+				$("#prev" + tableId).hide();
+				$("#next" + tableId).hide();
 			} else {
 				var collection = result.resultSet;
 				var currentPage = parseInt(result.currentPageNumber);

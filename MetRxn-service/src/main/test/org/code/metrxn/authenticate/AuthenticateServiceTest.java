@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import org.code.metrxn.model.authenticate.User;
 import org.code.metrxn.repository.authenticate.SessionRepository;
 import org.code.metrxn.repository.authenticate.UserRepository;
-import org.code.metrxn.service.authentication.AuthenticateUser;
+import org.code.metrxn.service.authentication.AuthenticateUserService;
 import org.code.metrxn.util.Logger;
 /**
  * 
@@ -47,7 +47,7 @@ public class AuthenticateServiceTest {
 		User newUser = new User("ambika","password1");
 		userRepository.addUser(newUser);
 		Logger.info("new user added to the database", AuthenticateServiceTest.class);
-		AuthenticateUser authenticateUser = new AuthenticateUser(userRepository, sessionRepository);
+		AuthenticateUserService authenticateUser = new AuthenticateUserService(userRepository, sessionRepository);
 		String result = authenticateUser.authenticateUser(newUser.getUserName(), newUser.getPassword());
 		Logger.info("the result of authenticate user is : " + result, AuthenticateServiceTest.class);
 	}

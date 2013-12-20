@@ -96,7 +96,13 @@
 			<version>0.8</version>
 		</dependency>
 		<!-- dependency for elastic search!! -->
-		
+		<!-- dependency for java mail -->
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4</version>
+		</dependency>
+		<!-- dependency for java mail ends here -->
 	</dependencies>
 	<properties>
 		<elasticsearch.version>0.15.2</elasticsearch.version>

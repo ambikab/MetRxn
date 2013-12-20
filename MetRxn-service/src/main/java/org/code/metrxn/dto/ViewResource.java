@@ -1,6 +1,5 @@
 package org.code.metrxn.dto;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -18,17 +17,28 @@ public class ViewResource {
 	public int totalRecordCount;
 	
 	public int currentPageNumber;
+	
+	public String sessionId;
 
 	public ViewResource() {
 	}
 	
-	public ViewResource(List<LinkedHashMap<String,Object>> resultSet, int totalRecordCount, int currentPageNumber) {
+	public ViewResource(List<LinkedHashMap<String,Object>> resultSet, int totalRecordCount, int currentPageNumber, String sessionId) {
 		super();
 		this.resultSet = resultSet;
 		this.totalRecordCount = totalRecordCount;
 		this.currentPageNumber = currentPageNumber;
+		this.sessionId = sessionId;
 	}
 
+	public void setSessionId(String sessionId){
+		this.sessionId = sessionId;
+	}
+	
+	public String getSessionId() {
+		return this.sessionId;
+	}
+	
 	public int getTotalRecordCount() {
 		return totalRecordCount;
 	}

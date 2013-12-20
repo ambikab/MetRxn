@@ -1,4 +1,29 @@
 var workFlowId, colName;
+
+function getCookie(c_name) {
+	var c_value = document.cookie;
+	var c_start = c_value.indexOf(" " + c_name + "=");
+	if (c_start == -1)
+	{
+	c_start = c_value.indexOf(c_name + "=");
+	}
+	if (c_start == -1)
+	{
+	c_value = null;
+	}
+	else
+	{
+	c_start = c_value.indexOf("=", c_start) + 1;
+	var c_end = c_value.indexOf(";", c_start);
+	if (c_end == -1)
+	{
+		c_end = c_value.length;
+	}
+	c_value = unescape(c_value.substring(c_start,c_end));
+	}
+	return c_value;
+}
+
 function uploadFile() {
 	var formdata = new FormData();
 	var entityType = $("#entityType").val();
@@ -7,6 +32,7 @@ function uploadFile() {
 	formdata.append("file", fileContent);
 	formdata.append("entityType", entityType);
 	formdata.append("fileType", fileType);
+	formdata.append("sessionId", getCookie("session"));
 	$.ajax({
 		url: 'http://localhost:8080/MetRxn-service/services/entity/uploader/' + fileType,  //Server script to process data
 		type: 'POST',
@@ -235,18 +261,17 @@ function updateMetaInformation() {
 }
 function saveMapping() {
 	var jsonString = (JSON.stringify(jsonarr));
-	var pathParams = "updatedMapping=" + jsonString + "&sessionId=" + workFlowId;
+	var pathParams = "updatedMapping=" + jsonString + "&workflowId=" + workFlowId + "&sessionId=" + getCookie('session');
 	$.ajax({
 		url: 'http://localhost:8080/MetRxn-service/services/entity/uploader/mapper',  //Server script to process data
 		type: 'POST',
 		data: pathParams,
 		dataType: "json"
-	}).complete(function( ) {
-		//console.log("mappings updated!!");		
+	}).complete(function( ) {		
 		$.ajax({
 			url: 'http://localhost:8080/MetRxn-service/services/entity/data/migrate',  //Server script to process data
 			type: 'POST',
-			data: "workFlowId=" + workFlowId,
+			data: "workFlowId=" + workFlowId + "&sessionId=" + getCookie('session'),
 			success: function() {
 				addAlert('success','mappings updated!!');
 			}

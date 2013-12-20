@@ -22,6 +22,7 @@ import org.code.metrxn.model.uploader.Rxn;
 import org.code.metrxn.model.uploader.SBMLContent;
 import org.code.metrxn.model.uploader.SpeciesRef;
 import org.code.metrxn.model.uploader.TableMapper;
+import org.code.metrxn.repository.authenticate.SessionRepository;
 import org.code.metrxn.repository.workflow.MapperRepository;
 import org.code.metrxn.repository.workflow.SBMLRepository;
 import org.code.metrxn.util.JsonUtil;
@@ -41,14 +42,17 @@ public class UploaderService {
 	static MapperRepository mapperRepository ;
 
 	static SBMLRepository sbmlRepository;
+	
+	static SessionRepository sessionRepository; 
 
 	public UploaderService(MapperRepository mapperRepository, SBMLRepository sbmlRepository) {
-		this.mapperRepository = mapperRepository;
+		UploaderService.mapperRepository = mapperRepository;
 	}
 
 	public UploaderService() {
 		mapperRepository = new MapperRepository();
 		sbmlRepository = new SBMLRepository();
+		sessionRepository = new SessionRepository();
 	}
 
 	/**
@@ -62,17 +66,20 @@ public class UploaderService {
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String uploadCSVFile(@FormDataParam("file") InputStream uploadedInputStream, @FormDataParam("file") FormDataContentDisposition fileInfo, @FormDataParam("entityType") String entityType, @FormDataParam("fileType") String fileType) {
-		String splitField = "\\", source = "SOURCE"; //TODO : remove fields as they are captured in the modal pop up of the next screen.
+	public String uploadCSVFile(@FormDataParam("file") InputStream uploadedInputStream, @FormDataParam("file") FormDataContentDisposition fileInfo, 
+								@FormDataParam("entityType") String entityType,  @FormDataParam("fileType") String fileType, @FormDataParam("sessionId") String sessionId) {
+		if(!sessionRepository.isValidSession(sessionId)) {
+			return JsonUtil.toJsonForObject(new TableMapper(null, null, null, null)).toString();
+		}
 		String delimitter = ",";
 		TableMapper tableMapper = null;
 		Map<String, FileColumn> tableData = null;
 		try {
 			String workflowId = UUID.randomUUID().toString();
-			tableData = readContents(uploadedInputStream, workflowId, entityType, delimitter, splitField, source);
+			tableData = readContents(uploadedInputStream, workflowId, entityType, delimitter);
 			tableMapper = mapperRepository.fetchDbMappings(workflowId, entityType, tableData);
 			tableMapper.setId(workflowId);
-
+			tableMapper.setSessionId(sessionId);
 		} catch (IOException e) {
 			Logger.error("Error in reading csv files." , UploaderService.class);
 			e.printStackTrace();
@@ -84,8 +91,17 @@ public class UploaderService {
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String uploadSBMLFile(@FormDataParam("file") InputStream uploadedInputStream, @FormDataParam("file") FormDataContentDisposition fileInfo, @FormDataParam("entityType") String entityType, @FormDataParam("fileType") String fileType) {
+	public String uploadSBMLFile(@FormDataParam("file") InputStream uploadedInputStream, @FormDataParam("file") FormDataContentDisposition fileInfo, 
+			@FormDataParam("entityType") String entityType, @FormDataParam("fileType") String fileType,  @FormDataParam("sessionId")String sessionId) {
 		Map<String, String> response = new HashMap<String, String>();
+		if(!sessionRepository.isValidSession(sessionId)){
+			response.put("Result", "Please log in to continue.");
+			response.put("status", "ERROR");
+			response.put("sessionId", null);
+			return JsonUtil.toJsonForObject(response).toString();
+		}
+		
+		response.put("sessionId", sessionId);
 		String workflowId = UUID.randomUUID().toString();
 		response.put("workflowId",workflowId);
 		try {
@@ -119,6 +135,8 @@ public class UploaderService {
 		} catch (XMLStreamException e) {
 			Logger.error("error in fetching the contents of the SBML file.", UploaderService.class);
 			e.printStackTrace();
+			response.put("Result", "Error in fetching the contents of the SBML file.");
+			response.put("status", "ERROR");
 		}
 		return JsonUtil.toJsonForObject(response).toString();
 	}
@@ -145,11 +163,11 @@ public class UploaderService {
 	 * @param uploadedInputStream
 	 * @throws IOException
 	 */
-	public Map<String, FileColumn> readContents(InputStream uploadedInputStream, String uId, String entityType, String delimitter, String splitField, String source) throws IOException {
+	public Map<String, FileColumn> readContents(InputStream uploadedInputStream, String uId, String entityType, String delimitter) throws IOException {
 		List<String> headerTokens = new ArrayList<String>();
 		BufferedReader ipReader = new BufferedReader(new InputStreamReader (uploadedInputStream));
 		Map<String, FileColumn> data = new HashMap<String, FileColumn>();
-		int header = -1; // To skip header ie., the first line of the csv.
+		int header = -1;
 		String ipLine = ipReader.readLine();
 		StringBuilder fileContents = new StringBuilder();
 		List<FileData> fileData = new ArrayList<FileData>();
@@ -157,7 +175,6 @@ public class UploaderService {
 			fileContents.append(ipLine + "\n");
 			if (header == -1) {
 				header = 1;
-				ipLine = ipLine.concat(",splitField,source");
 				StringTokenizer splitter = new StringTokenizer(ipLine, delimitter);
 				while (splitter.hasMoreTokens()) {
 					String key =splitter.nextToken(), value = null;
@@ -166,7 +183,6 @@ public class UploaderService {
 				}
 			}
 			else  {
-				ipLine = ipLine.concat("," + splitField + "," + source);
 				StringTokenizer splitter = new StringTokenizer(ipLine, delimitter);
 				for (int i = 0; i < headerTokens.size() ; i++) {
 					String value = "'" + (splitter.hasMoreTokens() ? splitter.nextToken() : "") + "'", key = headerTokens.get(i);

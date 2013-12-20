@@ -8,8 +8,14 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
+import org.code.metrxn.dto.ImageResource;
 import org.code.metrxn.model.Image;
 import org.code.metrxn.repository.ImageRepository;
+import org.code.metrxn.repository.authenticate.SessionRepository;
+import org.code.metrxn.util.JsonUtil;
+import org.code.metrxn.util.Logger;
+
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 /**
@@ -23,6 +29,8 @@ public class ImageService {
 
 	ImageRepository imageRepository = new ImageRepository();
 
+	SessionRepository sessionRepository = new SessionRepository();
+	
 	/**
 	 * 
 	 * @param imageName
@@ -31,7 +39,11 @@ public class ImageService {
 	 */
 	@POST 
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getImage(@FormParam("inputSQL") String inputSQL) throws IOException {
+	public String getImage(@FormParam("inputSQL") String inputSQL, @FormParam("sessionId") String sessionId) throws IOException {
+		ImageResource imageResource = new ImageResource(null, null);
+		if (!sessionRepository.isValidSession(sessionId))
+			return JsonUtil.toJsonForObject(imageResource).toString();
+		imageResource.setSessionId(sessionId);
 		Image image = imageRepository.getImageByName(inputSQL);
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		BufferedInputStream bis = new BufferedInputStream(image.getImage());
@@ -39,33 +51,13 @@ public class ImageService {
         try {
             for (int readNum; (readNum =bis.read(buf)) != -1;) {
                 bos.write(buf, 0, readNum); 
-                //System.out.println("read " + readNum + " bytes,");
             }
         } catch (IOException ex) {
-        	System.out.println("Exception while reading images");
+        	Logger.error("Exception while reading images", ImageService.class);
         }
         byte[] bytes = bos.toByteArray();
         bos.close();
-        return Base64.encode(bytes);
+        imageResource.setImage(Base64.encode(bytes));
+        return JsonUtil.toJsonForObject(imageResource).toString();
 	}
-
-/*	@GET
-	@Produces("image/jpg")
-	@Path("/{name}")
-	public void getImages(@PathParam("name") String imageName, @Context HttpServletResponse response)  {
-		BufferedInputStream bis;
-		try {
-			Image image = imageRepository.getImageByName(imageName);
-			bis = new BufferedInputStream(image.getImage());
-			response.setContentType("image/jpg");
-			response.setHeader("Content-Disposition", "inline; filename=\"" + image.getName() + ".jpg\"");
-			BufferedOutputStream output = new BufferedOutputStream(response.getOutputStream());
-			for (int data; (data = bis.read()) > -1;) {
-				output.write(data);
-			} 
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
-	}*/
-
 }

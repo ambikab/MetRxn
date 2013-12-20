@@ -22,11 +22,17 @@ function getSearchResults2(searchTerm, optionSelected) {
 
 function getSearchResults3(searchTerm, optionSel) {
 	//If option selected == metabolite => show corresponding reaction names.
-	return "select B.source,group_concat(distinct B.`Reaction synonyms`) `Reaction synonyms`, group_concat(distinct B.`Reaction acronyms`) `Reaction acronyms`, group_concat(distinct coalesce(B.`EC Number`,'')) `EC Numbers` " 
-	+ " from metrxn_version_2.metabolites A, metrxn_version_2.searchResults B " 
-	+ " where A.names_hash = PASSWORD(lower('" + searchTerm + "')) "
-	+ " and A.smiles_standard_hash = B.SMILES_hash "
-	+ " group by B.source ";
+	return "select B.source,group_concat(distinct B.`Reaction synonyms`) `Reaction synonyms`, " +
+				"	group_concat(distinct B.`Reaction acronyms`) `Reaction acronyms`, " +
+				"	group_concat(distinct coalesce(B.`EC Numbers`,'')) `EC Numbers` " +
+				"	from " +
+				"	(select distinct B.source,B.`Reaction synonyms`,B.`Reaction acronyms`, " +
+				"		coalesce(B.`EC Number`,'') `EC Numbers`,@rownum := @rownum + 1 AS `rownum`, " +
+				"		(@rownum - mod(@rownum,10))/10 AS `resultGroupIndex` " +
+				"		from metrxn_version_2.metabolites A, metrxn_version_2.searchResults B,(SELECT @rownum := 0) r " +
+				"		where A.names_hash = PASSWORD(lower('" + searchTerm + "')) " +
+						"	and A.smiles_standard_hash = B.SMILES_hash) B " +
+						"	group by B.source,B.`resultGroupIndex`";
 }
 
 function getImageSearch(imageName) {

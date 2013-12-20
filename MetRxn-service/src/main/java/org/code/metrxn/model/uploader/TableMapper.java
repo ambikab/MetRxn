@@ -17,6 +17,8 @@ public class TableMapper {
 	public String id;
 	
 	public Map<String, ArrayList<ColumnMapping>> mapper;
+	
+	public String sessionId; 
 
 	public TableMapper() {
 	}
@@ -27,7 +29,23 @@ public class TableMapper {
 		this.id = id;
 		this.mapper = mapper;
 	}
+	
+	public TableMapper(String entityName, String id, Map<String, ArrayList<ColumnMapping>> mapper, String sessionId) {
+		super();
+		this.entityName = entityName;
+		this.id = id;
+		this.mapper = mapper;
+		this.sessionId = sessionId;
+	}
 
+	public String getSessionId() {
+		return sessionId;
+	}
+	
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
+	
 	public String getEntityName() {
 		return entityName;
 	}

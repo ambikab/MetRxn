@@ -13,6 +13,10 @@ public class User {
 	
 	public String password;
 	
+	public String activationToken;
+	
+	public boolean isActive;
+	
 	ArrayList<String> roles;
 
 	public User() {
@@ -23,6 +27,30 @@ public class User {
 		super();
 		this.userName = userName;
 		this.password = password;
+	}
+	
+	public User(String userName, String password, String activationToken, boolean isActive) {
+		super();
+		this.userName = userName;
+		this.password = password;
+		this.isActive = isActive;
+		this.activationToken = activationToken;
+	}
+	
+	public String getActivationToken() {
+		return activationToken;
+	}
+
+	public void setActivationToken(String activationToken) {
+		this.activationToken = activationToken;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
 	}
 
 	public String getUserName() {

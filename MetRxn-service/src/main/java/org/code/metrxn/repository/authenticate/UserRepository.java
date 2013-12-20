@@ -26,9 +26,9 @@ public class UserRepository {
 		super();
 		this.connection = connection;
 	}
-	
-	public User fetchUser(String userName, String password){
-		String checkUser = "select userName, password from user where userName = ? and password = ? ";
+
+	public User fetchActiveUser(String userName, String password){
+		String checkUser = "select userName, password from user where userName = ? and password = ? and isActive = 1";
 		User loggedUser = null;
 		try {
 			PreparedStatement checkUserStmt= connection.prepareStatement(checkUser);
@@ -46,19 +46,51 @@ public class UserRepository {
 		}
 		return loggedUser;
 	}
-	
+
+	public User fetchUser(String userName) {
+		String checkUser = "select userName, password from user where userName = ? ";
+		User loggedUser = null;
+		try {
+			PreparedStatement checkUserStmt= connection.prepareStatement(checkUser);
+			checkUserStmt.setString(1, userName);
+			ResultSet resultSet = checkUserStmt.executeQuery();
+			while(resultSet.next()) {
+				loggedUser = new User();
+				loggedUser.setUserName(resultSet.getString(1));
+			}
+		} catch (SQLException e) {
+			Logger.error("Error in fetching the details of the user!", UserRepository.class);
+			e.printStackTrace();
+		}
+		return loggedUser;
+	}
+
 	public boolean addUser(User newUser) {
-		String addUser = "insert into user(userName, password) values(?, ?)";
+		String addUser = "insert into user(userName, password, activationToken) values(?, ?, ?)";
 		try {
 			PreparedStatement addUserStmt = connection.prepareStatement(addUser);
 			addUserStmt.setString(1, newUser.getUserName());
 			addUserStmt.setString(2, newUser.getPassword());
+			addUserStmt.setString(3, newUser.getActivationToken());
 			addUserStmt.executeUpdate();
-			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return false;
 		}
-		return false;
+		return true;
+	}
+	
+	public boolean activateUser (String activationToken) {
+		String activateUser = "update user set isActive = 1 where activationToken = ?";
+		try {
+			PreparedStatement addUserStmt = connection.prepareStatement(activateUser);
+			addUserStmt.setString(1, activationToken);
+			addUserStmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 
 }

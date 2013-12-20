@@ -9,6 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import org.code.metrxn.dto.ViewResource;
 import org.code.metrxn.repository.QueryRepository;
+import org.code.metrxn.repository.authenticate.SessionRepository;
 import org.code.metrxn.util.JsonUtil;
 import org.code.metrxn.util.SearchCriteria;
 
@@ -23,6 +24,8 @@ import org.code.metrxn.util.SearchCriteria;
 public class QueryExecutorService {
 
 	QueryRepository queryRepository = new QueryRepository();
+	
+	SessionRepository sessionRepository = new SessionRepository();
 	
 	/**
 	 * Fetches the result set of the employees table, that matches the given search query.
@@ -40,11 +43,10 @@ public class QueryExecutorService {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/results")
-	public String getPaginatedResults(@FormParam("pageNumber") String pageNumber, 
-			@FormParam("sortCol") String sortCol,  
-			@FormParam("sortOrder") String sortOrder,
-			@FormParam("queryString") String searchString) throws IOException, SQLException {
-		
+	public String getPaginatedResults(@FormParam("sessionId")String sessionId, @FormParam("pageNumber") String pageNumber, 
+			@FormParam("sortCol") String sortCol,  @FormParam("sortOrder") String sortOrder, @FormParam("queryString") String searchString) throws IOException, SQLException {
+		if(!sessionRepository.isValidSession(sessionId))
+			return JsonUtil.toJsonForObject(new ViewResource(null, -1,-1, null)).toString();
 		int reqPgNo = Integer.parseInt(pageNumber);
 		SearchCriteria searchCriteria = new SearchCriteria();
 		searchCriteria.setSearchString(searchString);
@@ -53,6 +55,6 @@ public class QueryExecutorService {
 		searchCriteria.setReqPageNo(reqPgNo);
 		searchCriteria.setNumberOfRecords(5);
 		int totalRecords = queryRepository.getTotalCount(searchCriteria);
-		return JsonUtil.toJsonForObject(new ViewResource(queryRepository.fetchResults(searchCriteria), totalRecords, reqPgNo)).toString();
+		return JsonUtil.toJsonForObject(new ViewResource(queryRepository.fetchResults(searchCriteria), totalRecords, reqPgNo, sessionId)).toString();
 	}
 }
