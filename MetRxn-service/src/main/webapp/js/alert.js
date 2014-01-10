@@ -1,4 +1,5 @@
-function addAlert(alertType, alertMsg) {
+
+	function addAlert(alertType, alertMsg) {
 	//valid alertTypes are : success / error / warning / info
 	var alertBegin;
 	if (alertType === "warning") {

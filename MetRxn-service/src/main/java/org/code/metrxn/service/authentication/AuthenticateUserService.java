@@ -55,7 +55,7 @@ public class AuthenticateUserService {
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public String invalidateSession(@FormParam("sessionId")String sessionId) {
 		HashMap<String, String> response = new HashMap<String, String>();
-		if (sessionRepository.invalidateSession(sessionId)) {
+		if (! sessionRepository.invalidateSession(sessionId)) {
 			response.put("Result", "Error in loggin out. Please re- try.");
 			response.put("Status", "ERROR");
 		} else {

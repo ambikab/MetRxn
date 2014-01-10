@@ -44,7 +44,7 @@ public class MapperService {
 		response.put("Result", "Please log in to continue.");
 		response.put("status", "ERROR");
 		if (!sessionRepository.isValidSession(sessionId)) {
-			return JsonUtil.toJson(response).toString();
+			return JsonUtil.toJsonForObject(response).toString();
 		}
 		
 		response.put("sessionId", sessionId);
@@ -63,7 +63,7 @@ public class MapperService {
 			e.printStackTrace();
 		}
 		
-		return JsonUtil.toJson(response).toString();
+		return JsonUtil.toJsonForObject(response).toString();
 	}
 
 	@Path("/metaData")
@@ -74,7 +74,7 @@ public class MapperService {
 			response.put("sessionId", null);
 			response.put("Result", "Please log in to continue.");
 			response.put("status", "ERROR");
-			return JsonUtil.toJson(response).toString();
+			return JsonUtil.toJsonForObject(response).toString();
 		}
 		
 		response.put("sessionId", sessionId);
@@ -104,7 +104,7 @@ public class MapperService {
 			response.put("sessionId", null);
 			response.put("Result", "Please log in to continue.");
 			response.put("status", "ERROR");
-			return JsonUtil.toJson(response).toString();
+			return JsonUtil.toJsonForObject(response).toString();
 		}
 		
 		response.put("sessionId", sessionId);

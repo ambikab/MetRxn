@@ -30,3 +30,11 @@ function setCookie(c_name,value,exdays)
 	var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
 	document.cookie=c_name + "=" + c_value;
 }
+
+$(document).ready(function(){ 
+	if ((getCookie('session') != null)) {
+		$("#sessionMenu").html('<a href = "#" id = "logOutBtn">Log Out <i class="icon-user"></i> </a>');
+	} else {
+		$("#sessionMenu").html('<a href="/MetRxn-service/login.html">Log in <i class="icon-user"></i></a>');
+	}
+});

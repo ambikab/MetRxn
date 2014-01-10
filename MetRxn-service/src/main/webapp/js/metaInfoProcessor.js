@@ -22,7 +22,7 @@ $(".searchLinks").live('click', function(e) {
 
 
 function searchResults (url, tableId, query, requestedPageNumber, sortCol, sortOrder) {
-	var pathParams = "pageNumber=" + requestedPageNumber + "&sortCol=" + sortCol + "&sortOrder=" + sortOrder + "&queryString=" + encodeURIComponent(query); 
+	var pathParams = "sessionId=" + getCookie('session') + "&pageNumber=" + requestedPageNumber + "&sortCol=" + sortCol + "&sortOrder=" + sortOrder + "&queryString=" + encodeURIComponent(query); 
 	$.ajax({
 		type: "POST",
 		url: url,
@@ -32,10 +32,15 @@ function searchResults (url, tableId, query, requestedPageNumber, sortCol, sortO
 			result = jQuery.parseJSON(JSON.stringify(result));
 			$("#resultsTable"+tableId + " tbody").empty();
 			resultsMode(tableId);
-			if ( result.isEmpty == true ) {
+			if ( result.resultSet[0]['isEmpty']) {
 				var rowData = "<tr><td colspan = '4'>No results matched your search!! </td></tr>";
 				$("#resultsTable"+tableId + " tbody").append(rowData);
-			} else {
+			} else if (! result['sessionId']) {
+				var rowData = "<tr><td colspan = '4'>Invalid session!! Please log in to continue. </td></tr>";
+				$("#resultsTable"+tableId + " tbody").append(rowData);
+				$("#prev" + tableId).hide();
+				$("#next" + tableId).hide();
+			}else {
 				var collection = result.resultSet;
 				var currentPage = parseInt(result.currentPageNumber);
 				//reqPgNo = currentPage;
@@ -58,13 +63,11 @@ function searchResults (url, tableId, query, requestedPageNumber, sortCol, sortO
 					var rowBegin = "<tr>";
 					var rowData = "";
 					var rowHead = "";
-					var testData = "<td><a class = 'searchLinks' href= 'http://localhost:8080/MetRxn-service/services/queries/results'>NAD+</a></td>";
 					$.each(collection[employee], function(key,value){
 						rowHead = rowHead + " <th> <a id = '"+ key + "' href='#'>" + key + "</th>";
 						rowData = rowData + " <td> " + value + "</td> ";
 					});
-					rowHead = rowHead + " <th> Anchor Tags</th>";
-					var rowEnd = testData + "</tr>";
+					var rowEnd =  "</tr>";
 					if (header != '1')
 						$("#resultsTable"+tableId + " thead").html(rowBegin + rowHead + rowEnd);
 					$("#resultsTable"+tableId + " tbody").append(rowBegin + rowData +  rowEnd );

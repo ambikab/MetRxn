@@ -1,29 +1,5 @@
 var workFlowId, colName;
 
-function getCookie(c_name) {
-	var c_value = document.cookie;
-	var c_start = c_value.indexOf(" " + c_name + "=");
-	if (c_start == -1)
-	{
-	c_start = c_value.indexOf(c_name + "=");
-	}
-	if (c_start == -1)
-	{
-	c_value = null;
-	}
-	else
-	{
-	c_start = c_value.indexOf("=", c_start) + 1;
-	var c_end = c_value.indexOf(";", c_start);
-	if (c_end == -1)
-	{
-		c_end = c_value.length;
-	}
-	c_value = unescape(c_value.substring(c_start,c_end));
-	}
-	return c_value;
-}
-
 function uploadFile() {
 	var formdata = new FormData();
 	var entityType = $("#entityType").val();
@@ -44,11 +20,15 @@ function uploadFile() {
 		async: false,
 		success: function(data) {
 			if (fileType == 'sbml') {
-				workFlowId = data.workflowId;
-				$("#metaboliteCnt").text(data.speciesCnt);
-				$("#compartmentCnt").text(data.compartmentCnt);
-				$("#rxnCnt").text(data.rxnCnt);
-				$( "#dialog-confirm" ).dialog( "open" );
+				if(data.status == "ERROR" ) {
+					addAlert('error' , data.Result);
+				} else {
+					workFlowId = data.workflowId;
+					$("#metaboliteCnt").text(data.speciesCnt);
+					$("#compartmentCnt").text(data.compartmentCnt);
+					$("#rxnCnt").text(data.rxnCnt);
+					$( "#dialog-confirm" ).dialog( "open" );
+				}
 			} else {
 				workFlowId = data.id;
 				var mapping = data.mapper;
@@ -126,12 +106,12 @@ $(document).ready(function(){
 						$.ajax({
 							url: 'http://localhost:8080/MetRxn-service/services/entity/uploader/mapper/sbml',  //Server script to process data
 							type: 'POST',
-							data: "workflowId=" + workFlowId,
+							data: "workflowId=" + workFlowId + "&sessionId=" + getCookie("session"),
 							context:this,
 							success: function() {
 								$( this ).dialog( "close" );	
 								addAlert('success','SBML contents saved to the database.');
-								var pathParams = "pageNumber=1" + "&sortCol=workflowId" + "&sortOrder=ASC" + "&queryString=" + getSBMLData(workFlowId); 
+								var pathParams = "pageNumber=1" + "&sessionId=" + getCookie("session") + "&sortCol=workflowId" + "&sortOrder=ASC" + "&queryString=" + getSBMLData(workFlowId); 
 								$.ajax({
 									url: 'http://localhost:8080/MetRxn-service/services/queries/results',  //Server script to process data
 									type: 'POST',

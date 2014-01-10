@@ -31,16 +31,17 @@ public class SBMLRepository {
 	}
 	
 	public boolean updateStatus(String workflowId) {
+		boolean flag = false;
 		String updateStatus = "update upload.sbml set status = 1 where workflowId = ? ";
 		try {
 			PreparedStatement psSBML = connection.prepareStatement(updateStatus);
 			psSBML.setString(1, workflowId);
-			psSBML.executeUpdate();
+			flag = psSBML.executeUpdate() == 1 ? true : false;
 		} catch (SQLException e) {
 			Logger.error("Error when updating the status of the SBML contents ", SBMLRepository.class);
 			e.printStackTrace();
 		}
-		return false;
+		return flag;
 	}
 	
 	public boolean insertSbml(SBMLContent sbmlContent, String workflowId) {

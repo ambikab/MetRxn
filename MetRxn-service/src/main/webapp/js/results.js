@@ -1,28 +1,3 @@
-function getCookie(c_name) {
-	var c_value = document.cookie;
-	var c_start = c_value.indexOf(" " + c_name + "=");
-	if (c_start == -1)
-	{
-	c_start = c_value.indexOf(c_name + "=");
-	}
-	if (c_start == -1)
-	{
-	c_value = null;
-	}
-	else
-	{
-	c_start = c_value.indexOf("=", c_start) + 1;
-	var c_end = c_value.indexOf(";", c_start);
-	if (c_end == -1)
-	{
-		c_end = c_value.length;
-	}
-	c_value = unescape(c_value.substring(c_start,c_end));
-	}
-	return c_value;
-}
-
-
 // displays the search results on click of the search button
 $('#appendedInputButtons').keypress(function(e){
         if(e.which == 13){//Enter key pressed
@@ -63,6 +38,11 @@ function fetchJSONResults (tableId, query, requestedPageNumber, sortCol, sortOrd
 			resultsMode(tableId);
 			if ( ! result['sessionId']) {
 				var rowData = "<tr><td colspan = '4'>Invalid session!! Please log in to continue. </td></tr>";
+				$("#resultsTable"+tableId + " tbody").append(rowData);
+				$("#prev" + tableId).hide();
+				$("#next" + tableId).hide();
+			} else if (result.resultSet[0]['isEmpty']) {
+				var rowData = "<tr><td colspan = '4'> No results match your search. </td></tr>";
 				$("#resultsTable"+tableId + " tbody").append(rowData);
 				$("#prev" + tableId).hide();
 				$("#next" + tableId).hide();
